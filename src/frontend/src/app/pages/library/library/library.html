@@ -1,0 +1,28 @@
+<header class="page-head"><div><div class="eyebrow">YOUR COLLECTION</div><h1>Every game. Every win.</h1></div><a class="btn" routerLink="/backlog">What’s next ↗</a></header>
+<div class="status error" *ngIf="error" role="alert">{{ error }} <button class="btn" (click)="load()">Retry</button></div>
+<div class="loading" *ngIf="loading" role="status">Opening your collection…</div>
+<ng-container *ngIf="!loading && !error">
+  <div class="collection-strip">
+    <span><strong>{{ games.length }}</strong> games</span>
+    <span><strong>{{ startedCount }}</strong> in progress</span>
+    <span class="platinum-counter"><img src="/medals/platinum.svg" width="24" height="28" alt="" /><strong>{{ platinumCount }}</strong> platinums</span>
+  </div>
+  <div class="toolbar">
+    <label class="field search-field">Find a game<input type="search" [(ngModel)]="query" placeholder="Search collection" /></label>
+    <gv-filter-dropdown label="Genre" [options]="genreFilterOptions" [(value)]="genre" />
+    <gv-filter-dropdown label="Access" [options]="accessOptions" [(value)]="access" />
+    <gv-filter-dropdown label="Sort" [options]="sortOptions" [(value)]="sort" />
+  </div>
+  <div class="section-head">
+    <div class="chips" aria-label="Progress filter">
+      <button class="chip" *ngFor="let option of [['all','All'],['playing','In progress'],['platinum','✦ Platinum'],['not_started','Not started'],['unknown','No PSN progress']]"
+        [class.active]="state === option[0]" [attr.aria-pressed]="state === option[0]" (click)="state = option[0]">{{ option[1] }}</button>
+    </div>
+    <button class="btn btn-ghost btn-small" (click)="view = view === 'cards' ? 'list' : 'cards'" [attr.aria-label]="view === 'cards' ? 'Switch to list' : 'Switch to cards'">{{ view === 'cards' ? '≡ List' : '▦ Cards' }}</button>
+  </div>
+  <p class="result-count">{{ filtered.length }} games</p>
+  <div class="card-collection" [class.list-layout]="view === 'list'">
+    <gv-game-card *ngFor="let game of filtered" [game]="game" />
+  </div>
+  <div class="empty" *ngIf="!filtered.length"><h2>No games found.</h2><button class="btn" (click)="reset()">Clear filters</button></div>
+</ng-container>

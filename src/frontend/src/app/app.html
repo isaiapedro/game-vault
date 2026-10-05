@@ -1,0 +1,30 @@
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/library"
+      ><span class="brand-mark" aria-hidden="true">V</span
+      ><span
+        >GAME<span class="brand-light">VAULT</span><small>EVERY TROPHY TELLS A STORY.</small></span
+      ></a
+    >
+    <span class="nav-label">YOUR SPACE</span>
+    <nav aria-label="Main navigation">
+      <a routerLink="/library" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><span aria-hidden="true">▦</span> Library</a
+      >
+      <a routerLink="/backlog" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><span aria-hidden="true">≡</span> Play queue</a
+      >
+      <a routerLink="/wishlist" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><span aria-hidden="true">♡</span> Wishlist</a
+      >
+      <a routerLink="/statistics" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><span aria-hidden="true">✦</span> Progress</a
+      >
+    </nav>
+    <div class="sidebar-footer">
+      <span class="local-dot"></span> Your personal collection
+    </div>
+  </aside>
+  <main id="main-content" class="page-content" tabindex="-1"><router-outlet /></main>
+</div>

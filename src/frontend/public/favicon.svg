@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="vault" x2="1" y2="1">
+      <stop stop-color="#64dee1"/>
+      <stop offset=".55" stop-color="#ad97f4"/>
+      <stop offset="1" stop-color="#ef9fcf"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="#171b29"/>
+  <path d="M12 19h8l12 27 12-27h8L36 53h-8z" fill="url(#vault)"/>
+  <path d="M32 7l2.2 5.8L40 15l-5.8 2.2L32 23l-2.2-5.8L24 15l5.8-2.2z" fill="#f2d591"/>
+</svg>

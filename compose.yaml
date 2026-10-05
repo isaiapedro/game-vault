@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      GAME_VAULT_BIND_HOST: ${GAME_VAULT_BIND_HOST:-127.0.0.1}
+    volumes:
+      - ./.local/game-vault-snapshot.json:/data/game-vault-snapshot.json:ro
+      - ./.local/static/covers:/data/covers:ro
+      - ./.local/static/artwork:/data/artwork:ro
+    mem_limit: ${APP_MEMORY_LIMIT:-192m}
+    cpus: ${APP_CPU_LIMIT:-0.50}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://'+os.environ['GAME_VAULT_BIND_HOST']+':4200/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s

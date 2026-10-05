@@ -1,0 +1,56 @@
+<a class="text-link" routerLink="/library">← Collection</a>
+<div *ngIf="loading" class="loading" role="status">Opening game…</div>
+<div *ngIf="error" class="status error" role="alert">{{ error }} <button class="btn" (click)="load()">Retry</button></div>
+<ng-container *ngIf="game && !loading">
+  <header class="detail-hero progress-surface" [class.is-platinum]="platinum(game)" [style.--fill]="(progress(game) ?? 0) + '%'">
+    <img class="detail-backdrop" *ngIf="artwork(game).length" [src]="artwork(game)[0]" alt="" />
+    <img class="detail-cover" *ngIf="game.cover_url; else fallback" [src]="game.cover_url" alt="" (error)="game.cover_url = undefined" />
+    <ng-template #fallback><div class="detail-cover cover-fallback" aria-hidden="true">{{ displayTitle(game).slice(0,2).toUpperCase() }}</div></ng-template>
+    <div class="detail-heading">
+      <h1>{{ displayTitle(game) }}</h1>
+      <div class="award detail-award" *ngIf="platinum(game)"><img src="/medals/platinum.svg" alt="" width="28" height="34" /> Platinum earned. Yours forever.</div>
+    </div>
+    <div class="detail-progress"><strong>{{ progress(game) == null ? '—' : (progress(game) | number:'1.0-1') + '%' }}</strong><span>Trophy progress</span><small *ngIf="counts(game) as count">{{ count.earned }} / {{ count.total }} earned</small></div>
+    <span class="card-progress-line" aria-hidden="true"></span>
+  </header>
+  <nav class="tabs" aria-label="Game sections"><button *ngFor="let tab of ['about','trophies']" [class.active]="activeTab === tab" [attr.aria-pressed]="activeTab === tab" (click)="activeTab = tab">{{ tab | titlecase }}</button></nav>
+  <section *ngIf="activeTab === 'trophies'">
+    <a class="text-link" *ngIf="game.specifications?.['trophy_guide_url']" [href]="game.specifications?.['trophy_guide_url']" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Trophy guide ↗ <small>External reference · earned progress stays on PSN</small></a>
+    <div class="section-head"><h2>{{ trophyFilter === 'earned' ? 'Your achievements' : trophyFilter === 'unearned' ? 'The next challenge' : 'All trophies' }}</h2><small>{{ earned }} / {{ trophies.length }} saved trophies</small></div>
+    <div class="tier-summary" *ngIf="trophies.length"><div class="tier-stat" *ngFor="let count of tierCounts"><img [src]="'/medals/' + count.tier + '.svg'" alt="" width="28" height="34" /><div><span class="tier-label">{{ count.tier | titlecase }}</span><strong>{{ count.earned }} <small>/ {{ count.total }}</small></strong></div></div></div>
+    <div class="toolbar" *ngIf="trophies.length">
+      <div class="chips" aria-label="Trophy filter"><button class="chip" *ngFor="let option of [['unearned','To earn'],['earned','Earned'],['all','All']]" [class.active]="trophyFilter === option[0]" [attr.aria-pressed]="trophyFilter === option[0]" (click)="trophyFilter = option[0]">{{ option[1] }}</button></div>
+      <gv-filter-dropdown label="Set" [options]="groupOptions" [(value)]="groupFilter" />
+      <label class="inline-check"><input type="checkbox" [(ngModel)]="hideSpoilers" />Hide secret trophies</label>
+    </div>
+    <article class="trophy-row" *ngFor="let trophy of filteredTrophies" [class.earned]="trophy.earned" [class.platinum-trophy]="trophy.trophy_type === 'platinum' && trophy.earned">
+      <img [src]="'/medals/' + trophy.trophy_type + '.svg'" [alt]="trophy.trophy_type + ' trophy'" width="32" height="40" />
+      <div class="game-copy"><h3>{{ concealed(trophy) ? 'Secret trophy' : trophy.name }}</h3><p *ngIf="!concealed(trophy)">{{ trophy.description }}</p><small>{{ trophy.is_dlc ? 'DLC' : trophy.is_dlc === false ? 'Base game' : 'Set unknown' }}<ng-container *ngIf="trophy.earned_at"> · {{ trophy.earned_at | date:'mediumDate' }}</ng-container></small></div>
+      <span class="earned-check" *ngIf="trophy.earned" aria-label="Earned">✓</span>
+    </article>
+    <div class="empty" *ngIf="!filteredTrophies.length"><h2>{{ !trophies.length ? 'Trophy details aren’t available yet.' : trophyFilter === 'unearned' && earned === trophies.length ? 'Every saved trophy earned. Nicely done.' : 'No trophies in this selection.' }}</h2><p *ngIf="!trophies.length && game.psn_progress != null">Your PSN summary is shown above.</p><p *ngIf="!trophies.length && game.psn_progress == null">This release was not found in the connected PSN account snapshot.</p></div>
+  </section>
+  <section *ngIf="activeTab === 'about'" class="panel">
+    <div class="section-head"><h2>About this game</h2><span class="igdb-score about-score" *ngIf="igdbScore(game) != null">★ IGDB users {{ igdbScore(game) | number:'1.0-0' }} / 100<small *ngIf="igdbScoreCount(game) != null"> · {{ igdbScoreCount(game) }} ratings</small></span></div>
+    <div class="about-tags"><span class="badge">{{ game.platform }}</span><span class="badge" *ngIf="releaseYear(game)">{{ releaseYear(game) }}</span><span class="badge wanted" *ngIf="game.ownership === 'wanted'">Not owned</span><span class="badge" *ngIf="game.ownership !== 'wanted'">In your library</span><span class="badge blocked" *ngIf="!platinum(game) && game.platinum_feasibility === 'blocked'">Platinum blocked</span><span class="badge platinum-tag" *ngIf="platinum(game)">✦ Platinum earned</span><span class="badge" *ngFor="let genre of genres(game)">{{ genre }}</span></div>
+    <p class="about-description" *ngIf="game.description">{{ game.description }}</p>
+    <div class="about-facts">
+      <div *ngIf="game.developer"><small>Developer</small><strong>{{ game.developer }}</strong></div>
+      <div *ngIf="game.publisher"><small>Publisher</small><strong>{{ game.publisher }}</strong></div>
+      <div *ngIf="game.release_date"><small>First release</small><strong>{{ game.release_date | date:'longDate' }}</strong></div>
+      <div *ngIf="specificationList(game, 'modes').length"><small>Play modes</small><strong>{{ specificationList(game, 'modes').join(' · ') }}</strong></div>
+      <div *ngIf="specificationList(game, 'themes').length"><small>Themes</small><strong>{{ specificationList(game, 'themes').join(' · ') }}</strong></div>
+      <div *ngIf="game.hltb_completionist_hours != null"><small>Completionist estimate</small><strong>~{{ game.hltb_completionist_hours | number:'1.0-0' }} hours</strong></div>
+      <div><small>Trophy data</small><strong *ngIf="counts(game) as count">{{ count.total }} trophies · {{ count.scope }}</strong><strong *ngIf="!counts(game)">No saved trophy set or account progress</strong></div>
+    </div>
+    <p class="about-blocker" *ngIf="game.platinum_blocker_reason && !platinum(game)">{{ game.platinum_blocker_reason }}</p>
+    <div class="artwork-gallery" *ngIf="artwork(game).length"><img *ngFor="let image of artwork(game)" [src]="image" [alt]="displayTitle(game) + ' game artwork'" loading="lazy" /></div>
+    <aside class="source-footnote" aria-label="Source notes">
+      <span *ngIf="displayTitle(game) !== game.title">PSN title: {{ game.title }}</span>
+      <span *ngIf="game.hltb_completionist_hours != null">Time is a HowLongToBeat completionist estimate, not a platinum prediction</span>
+      <span *ngIf="game.psn_summary_at">PSN checked {{ game.psn_summary_at | date:'mediumDate' }}</span>
+      <span *ngIf="game.psn_summary_at == null">No connected-account trophy progress for this release</span>
+      <span>Genres combine local tags and IGDB data · Trophy progress is saved PSN data</span>
+    </aside>
+  </section>
+</ng-container>

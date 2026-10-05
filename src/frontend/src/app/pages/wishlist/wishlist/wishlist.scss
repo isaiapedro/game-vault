@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.price-intro { margin: 0 0 1.5rem; }
+.price-intro h2 { margin: 0 0 .25rem; font-size: 25px; }
+.price-intro p { margin: 0; color: var(--text-muted, #aaa); }
+.wishlist-collection { align-items: stretch; }
+.wishlist-entry { min-width: 0; }
+.offer-panel { padding: .8rem .9rem; border: 1px solid rgba(255,255,255,.14); border-radius: .75rem; margin-top: .5rem; }
+.offer-row { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: .5rem; padding: .45rem 0; }
+.offer-row + .offer-row { border-top: 1px solid rgba(255,255,255,.1); }
+.offer-kind { font-size: 15px; font-weight: 700; }
+.offer-detail { min-width: 0; font-size: 15px; }
+.offer-detail small { display: block; color: var(--text-muted, #aaa); line-height: 1.4; }
+.offer-detail a { display: inline-block; margin-top: .25rem; }
+.offer-missing { color: var(--text-muted, #aaa); font-size: 15px; }

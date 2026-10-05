@@ -1,0 +1,12 @@
+<header class="page-head"><div><div class="eyebrow">LOOK HOW FAR YOU’VE COME</div><h1>Your progress.</h1></div></header>
+<div *ngIf="error" class="status error" role="alert">{{ error }} <button class="btn" (click)="load()">Retry</button></div>
+<div *ngIf="loading" class="loading" role="status">Opening your progress…</div>
+<ng-container *ngIf="!loading && !error && stats">
+  <div class="progress-dashboard">
+    <section class="achievement-banner progress-surface is-platinum"><img src="/medals/platinum.svg" alt="" width="64" height="78" /><div><div class="eyebrow">EARNED, NOT GIVEN</div><strong class="display-number">{{ platinums.length }}</strong><h2>Platinums in your vault</h2></div></section>
+    <section class="panel average-panel"><div class="eyebrow">TROPHY PROGRESS</div><strong class="display-number">{{ average == null ? '—' : (average | number:'1.0-1') + '%' }}</strong><p>Average across {{ known.length }} / {{ games.length }} games with data</p><div class="progress" *ngIf="average != null" role="progressbar" aria-label="Average trophy progress for games with data" [attr.aria-valuenow]="average" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="average"></span></div></section>
+  </div>
+  <section class="section" *ngIf="close.length"><div class="section-head"><h2>Keep the momentum</h2><small>Most trophy progress</small></div><div class="card-collection"><gv-game-card *ngFor="let game of close" [game]="game" /></div></section>
+  <section class="section"><div class="section-head"><h2>The platinum collection</h2><span class="award">✦ {{ platinums.length }} earned</span></div><div class="card-collection"><gv-game-card *ngFor="let game of platinums" [game]="game" /></div><p *ngIf="!platinums.length">Your first platinum belongs here.</p></section>
+  <details class="section panel"><summary>Trophy breakdown</summary><p>{{ stats.trophies['loaded_game_count'] || 0 }} games with saved trophy details.</p><div class="tier-summary"><div class="tier-stat" *ngFor="let tier of tiers"><img [src]="'/medals/' + tier + '.svg'" alt="" width="32" height="38" /><div><span class="tier-label">{{ tier | titlecase }}</span><strong>{{ tierCount(tier, 'earned') }} <small>/ {{ tierCount(tier, 'total') }}</small></strong></div></div></div></details>
+</ng-container>

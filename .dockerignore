@@ -1,0 +1,9 @@
+.git
+.local
+config/.env
+venv
+src/frontend/node_modules
+src/frontend/dist
+**/__pycache__
+**/.pytest_cache
+*.png

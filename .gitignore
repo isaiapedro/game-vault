@@ -1,0 +1,25 @@
+# Local secrets, collection snapshots, dependencies, and generated output.
+config/.env
+.env
+.local/
+venv/
+.venv/
+__pycache__/
+*.pyc
+src/frontend/node_modules/
+src/frontend/dist/
+src/frontend/.angular/
+test-results/
+
+# Workspace control-plane records stay local if this becomes a nested repository.
+AGENTS.md
+BEHAVIOR.md
+SYSTEM.md
+manifest.yaml
+DECISIONS.md
+DEPENDENCIES.md
+UX_DATA_AUDIT.md
+IMPLEMENTATION_REVIEW.md
+API_CONTRACT.md
+audit-*.png
+verification-*.png

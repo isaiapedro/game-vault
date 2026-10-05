@@ -1,0 +1,27 @@
+<header class="page-head"><div><div class="eyebrow">YOUR NEXT FINDS</div><h1>On your radar.</h1><p>{{ games.length }} games to add to your shelf.</p></div></header>
+<div *ngIf="error" class="status error" role="alert">{{ error }} <button class="btn" (click)="load()">Retry</button></div>
+<div *ngIf="loading" class="loading" role="status">Opening your wishlist…</div>
+<ng-container *ngIf="!loading && !error">
+  <aside class="price-intro"><h2>Observed prices</h2><p>Reviewed Brazilian offers recorded during release preparation. Prices and availability may have changed; check the seller before buying.</p></aside>
+  <div class="card-collection wishlist-collection">
+    <article class="wishlist-entry" *ngFor="let game of games">
+      <gv-game-card [game]="game" />
+      <div class="offer-panel" [attr.aria-label]="'Offers for ' + game.title">
+        <div class="offer-row" *ngFor="let kind of offerKinds">
+          <span class="offer-kind">{{ kind === 'mercado_livre' ? 'Mercado Livre' : 'PS3 Store' }}</span>
+          <ng-container *ngIf="offerFor(game, kind) as offer; else unavailable">
+            <div class="offer-detail">
+              <strong>Item {{ offer.item_price | currency:offer.currency:'symbol':'1.2-2' }}</strong>
+              <span *ngIf="offerTotal(offer) !== null"> · Delivered {{ offerTotal(offer) | currency:offer.currency:'symbol':'1.2-2' }}</span>
+              <span *ngIf="offerTotal(offer) === null"> · Shipping unknown</span>
+              <small>{{ offer.source }} · {{ offer.observed_at | date:'dd MMM yyyy' }} · {{ offer.condition }} · {{ offer.availability }}</small>
+              <a *ngIf="safeOfferUrl(offer) as url" [href]="url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'View ' + offer.title + ' at ' + offer.source">View offer <span aria-hidden="true">↗</span></a>
+            </div>
+          </ng-container>
+          <ng-template #unavailable><span class="offer-missing">{{ kind === 'ps3_store' ? 'PS3 Store price unavailable' : 'No verified offer' }}</span></ng-template>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="empty" *ngIf="!games.length"><h2>Nothing on your wishlist.</h2><a class="btn" routerLink="/library">Explore collection</a></div>
+</ng-container>

@@ -1,0 +1,17 @@
+<header class="page-head"><div><div class="eyebrow">PLAY SOMETHING GOOD</div><h1>What’s next?</h1><p>A different genre. A fresh challenge.</p></div><a class="btn" routerLink="/library">All games ↗</a></header>
+<div *ngIf="error" class="status error" role="alert">{{ error }} <button class="btn" (click)="load()">Retry</button></div>
+<div *ngIf="loading" class="loading" role="status">Opening your queue…</div>
+<ng-container *ngIf="!loading && !error">
+  <section *ngIf="picks.length" class="picks-section">
+    <div class="section-head"><h2>Mix it up</h2><small>Available · different genres</small></div>
+    <div class="card-collection"><gv-game-card *ngFor="let game of picks" [game]="game" /></div>
+  </section>
+  <div class="section-head section"><h2>Your queue <small>{{ filtered.length }}</small></h2></div>
+  <div class="toolbar">
+    <gv-filter-dropdown label="Genre" [options]="genreFilterOptions" [(value)]="genre" />
+    <gv-filter-dropdown label="Access" [options]="accessOptions" [(value)]="access" />
+    <label class="inline-check"><input type="checkbox" [(ngModel)]="showFinished" />Show completed</label>
+  </div>
+  <div class="card-collection list-layout"><gv-game-card *ngFor="let game of filtered" [game]="game" [rank]="game.position" /></div>
+  <div *ngIf="!filtered.length" class="empty"><h2>No games in this selection.</h2><p>Try another genre or access filter.</p></div>
+</ng-container>
